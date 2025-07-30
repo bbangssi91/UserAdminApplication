@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: UserAdminApplication
+  # Datasource H2
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/useradmin
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+  # test 환경에서 docker 관련 설정이 필요 없도록 disable
+  docker:
+    compose:
+      enabled: false
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+
+server:
+  port: 8080 # Test 환경은 항상 8080 포트를 사용
