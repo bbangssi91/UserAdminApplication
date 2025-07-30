@@ -6,6 +6,7 @@ import com.autoever.useradminapplication.global.GlobalApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -14,22 +15,32 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    // 유효성 검사 실패 예외 처리
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<GlobalApiResponse<Object>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public ResponseEntity<GlobalApiResponse<Map<String, String>>> handleValidationException(
+            MethodArgumentNotValidException exception) {
+        BindingResult bindingResult = exception.getBindingResult();
 
-        String errorMsg = e.getBindingResult().getFieldErrors().stream()
-                .map(FieldError::getDefaultMessage)
-                .collect(Collectors.joining(" | "));
+        // 필드별 에러 메시지 저장
+        Map<String, String> errors = new HashMap<>();
+        for (FieldError fieldError : bindingResult.getFieldErrors()) {
+            errors.put(fieldError.getField(), fieldError.getDefaultMessage());
+        }
 
-        return createErrorResponse(e, ErrorCode.INVALID_PARAMETER, errorMsg);
+        // 400 상태 반환
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(GlobalApiResponse.failure("유효성 검사 실패", errors));
     }
+
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(DataNotFoundException.class)

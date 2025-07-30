@@ -1,11 +1,9 @@
 package com.autoever.useradminapplication.domain.entity;
 
+import com.autoever.useradminapplication.constants.enums.RoleType;
 import com.autoever.useradminapplication.domain.vo.UserVO;
 import com.autoever.useradminapplication.global.auditing.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,6 +30,9 @@ public class Users extends BaseEntity {
     private String phoneNumber; // 핸드폰번호
 
     private String address; // 주소
+
+    @Enumerated(EnumType.STRING)
+    private RoleType roleType;
 
     public UserVO convertToVO(Users users) {
         return UserVO.builder()

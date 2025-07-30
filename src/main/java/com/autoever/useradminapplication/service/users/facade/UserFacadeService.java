@@ -4,6 +4,7 @@ import com.autoever.useradminapplication.domain.entity.Users;
 import com.autoever.useradminapplication.dto.request.SignUpRequestDto;
 import com.autoever.useradminapplication.dto.response.SignUpResponseDto;
 import com.autoever.useradminapplication.dto.response.UserSearchResponseDto;
+import com.autoever.useradminapplication.dto.response.admin.AdminUserSearchResponseDto;
 import com.autoever.useradminapplication.exception.DataNotFoundException;
 import com.autoever.useradminapplication.exception.UniqueViolationException;
 import com.autoever.useradminapplication.global.error.ErrorCode;
@@ -11,6 +12,8 @@ import com.autoever.useradminapplication.service.users.UserSearchService;
 import com.autoever.useradminapplication.service.users.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -45,4 +48,13 @@ public class UserFacadeService {
 
         return UserSearchResponseDto.toResponse(user);
     }
+
+    public Page<AdminUserSearchResponseDto> getUsers(String userName, Pageable pageable) {
+        // 필터 및 페이징 조건을 서비스 계층으로 전달
+        Page<Users> usersPage = userSearchService.findAllByConditions(userName, pageable);
+
+        // Users 엔티티를 UserSearchResponseDto로 변환
+        return usersPage.map(AdminUserSearchResponseDto::fromEntity);
+    }
+
 }

@@ -4,6 +4,8 @@ import com.autoever.useradminapplication.domain.entity.Users;
 import com.autoever.useradminapplication.repository.UserRepository;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,5 +25,10 @@ public class UserSearchService {
     @Transactional(readOnly = true)
     public Optional<Users> findUserById(Long id) {
         return userRepository.findById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Users> findAllByConditions(String userName, Pageable pageable) {
+        return userRepository.findAllByConditions(userName, pageable);
     }
 }
