@@ -3,6 +3,7 @@ package com.autoever.useradminapplication.service.users;
 import com.autoever.useradminapplication.domain.entity.Users;
 import com.autoever.useradminapplication.repository.UserRepository;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,14 @@ public class UserSearchService {
     }
 
     @Transactional(readOnly = true)
+    public Optional<Users> findByResidentRegistrationNumber(@NotBlank(message = "주민등록번호는 필수 입력값입니다.") @Pattern(
+            regexp = "\\d{6}-\\d{7}",
+            message = "주민등록번호 형식은 '숫자6자리-숫자7자리'여야 합니다."
+    ) String residentId) {
+        return userRepository.findByResidentRegistrationNumber(residentId);
+    }
+
+    @Transactional(readOnly = true)
     public Optional<Users> findUserById(Long id) {
         return userRepository.findById(id);
     }
@@ -31,4 +40,6 @@ public class UserSearchService {
     public Page<Users> findAllByConditions(String userName, Pageable pageable) {
         return userRepository.findAllByConditions(userName, pageable);
     }
+
+
 }

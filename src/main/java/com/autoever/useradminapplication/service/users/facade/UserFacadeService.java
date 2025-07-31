@@ -10,11 +10,15 @@ import com.autoever.useradminapplication.exception.UniqueViolationException;
 import com.autoever.useradminapplication.global.error.ErrorCode;
 import com.autoever.useradminapplication.service.users.UserSearchService;
 import com.autoever.useradminapplication.service.users.UserService;
+import com.autoever.useradminapplication.utils.EncryptionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -22,6 +26,8 @@ public class UserFacadeService {
 
     private final UserSearchService userSearchService;
     private final UserService userService;
+    private final EncryptionService encryptionService;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      *  사용자의 회원가입을 수행하는 메서드
@@ -31,14 +37,26 @@ public class UserFacadeService {
      */
     public SignUpResponseDto signUp(@Valid SignUpRequestDto record) {
 
-        // 1. 사용자 ID가 중복되는지 검사
+        // 1. 사용자 계정이 중복되는지 검사
         userSearchService.findUsersByAccountId(record.accountId())
                 .ifPresent(user -> {
                     throw new UniqueViolationException(ErrorCode.EXISTS_UNIQUE_VALUE, "[" + record.accountId() + "] 이미 존재하는 ID입니다");
                 });
 
-        // 2. 유저 회원가입
-        Users results = userService.registerUser(record.toEntity());
+        // 2. 사용자 주민번호 중복되는지 검사
+        userSearchService.findByResidentRegistrationNumber(record.residentRegistrationNumber())
+                .ifPresent(user -> {
+                    throw new UniqueViolationException(ErrorCode.EXISTS_UNIQUE_VALUE, "이미 존재하는 주민번호입니다");
+                });
+
+        // 3. 비밀번호와 주민등록번호를 암호화
+        String encode = encryptionService.encryptPassword(record.password());
+        String encrypt = encryptionService.encryptByAES(record.residentRegistrationNumber());
+        Users encryptedEntity = Users.toEntity(record, encode, encrypt);
+
+        // 4. 유저 회원가입
+        Users results = userService.registerUser(encryptedEntity);
+
         return SignUpResponseDto.toResponse(results);
     }
 
@@ -49,12 +67,14 @@ public class UserFacadeService {
         return UserSearchResponseDto.toResponse(user);
     }
 
-    public Page<AdminUserSearchResponseDto> getUsers(String userName, Pageable pageable) {
+    public List<AdminUserSearchResponseDto> getUsers(String userName, Pageable pageable) {
         // 필터 및 페이징 조건을 서비스 계층으로 전달
         Page<Users> usersPage = userSearchService.findAllByConditions(userName, pageable);
 
         // Users 엔티티를 UserSearchResponseDto로 변환
-        return usersPage.map(AdminUserSearchResponseDto::fromEntity);
+        return usersPage.getContent().stream()
+                .map(AdminUserSearchResponseDto::fromEntity)
+                .toList();
     }
 
 }

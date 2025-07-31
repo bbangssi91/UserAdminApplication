@@ -19,4 +19,5 @@ public interface UserRepository extends JpaRepository<Users, Long> {
             "WHERE (:userName IS NULL OR u.userName LIKE %:userName%) ")
     Page<Users> findAllByConditions(String userName, Pageable pageable);
 
+    Optional<Users> findByResidentRegistrationNumber(String residentId);
 }

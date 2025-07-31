@@ -2,8 +2,11 @@ package com.autoever.useradminapplication.domain.entity;
 
 import com.autoever.useradminapplication.constants.enums.RoleType;
 import com.autoever.useradminapplication.domain.vo.UserVO;
+import com.autoever.useradminapplication.dto.request.SignUpRequestDto;
+import com.autoever.useradminapplication.dto.request.admin.AdminUserUpdateRequestDto;
 import com.autoever.useradminapplication.global.auditing.BaseEntity;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,12 +37,41 @@ public class Users extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
 
+    /**
+     *  Entity로 변환하는 생성메서드
+     *
+     * @param record    : 요청 데이터
+     * @param password  : BCrypt로 암호화된 비밀번호
+     * @param residentRegistrationNumber : AES로 암호화된 주민등록번호
+     * @return
+     */
+    public static Users toEntity(SignUpRequestDto record, String password, String residentRegistrationNumber) {
+        return Users.builder()
+                .accountId(record.accountId())
+                .password(password) // 암호화된 비밀번호
+                .userName(record.userName())
+                .residentRegistrationNumber(residentRegistrationNumber) // 암호화된 주민등록번호
+                .phoneNumber(record.phoneNumber())
+                .address(record.address())
+                .build();
+    }
+
     public UserVO convertToVO(Users users) {
         return UserVO.builder()
-                .userName(users.getUserName())
+                .password(users.getPassword())
                 .address(users.getAddress())
-                .phoneNumber(users.getPhoneNumber())
-                .residentRegistrationNumber(users.getResidentRegistrationNumber())
                 .build();
+    }
+
+    public void changeUserInfo(String password, @Valid AdminUserUpdateRequestDto request) {
+        if(password != null) {
+            if(!password.isEmpty()) {
+                this.password = password;
+            }
+        }
+
+        if(request.address() != null) {
+            this.address = request.address();
+        }
     }
 }

@@ -6,6 +6,8 @@ import com.autoever.useradminapplication.global.GlobalApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -39,6 +41,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(GlobalApiResponse.failure("유효성 검사 실패", errors));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<GlobalApiResponse<Object>> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        return createErrorResponse(e, ErrorCode.INVALID_PARAMETER, e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<GlobalApiResponse<Object>> authorizationDeniedException(AuthorizationDeniedException e) {
+        return createErrorResponse(e, ErrorCode.FORBIDDEN, e.getMessage());
     }
 
 
