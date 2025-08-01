@@ -36,12 +36,9 @@ public class UserApi {
     }
 
     @PostMapping(value = "/login", produces = "application/json", consumes = "application/json")
-    public ResponseEntity<GlobalApiResponse<LoginResponseDto>> signUp(@RequestBody @Valid LoginRequestDto request) {
-
+    public ResponseEntity<GlobalApiResponse<LoginResponseDto>> login(@RequestBody @Valid LoginRequestDto request) {
         // 로그인 서비스 호출
         LoginResponseDto response = loginService.login(request);
-
-        //SignUpResponseDto signUpResponseDto = userFacadeService.signUp(request);
         return ResponseEntity.ok(GlobalApiResponse.success(response));
     }
 

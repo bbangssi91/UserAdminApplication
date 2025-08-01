@@ -8,6 +8,7 @@ public record SignUpResponseDto(
         String accountId, // 계정
         String userName, // 성명
         String phoneNumber, // 핸드폰번호
+        String city,
         String address // 주소
 ) {
         public static SignUpResponseDto toResponse(Users users) {
@@ -15,6 +16,7 @@ public record SignUpResponseDto(
                         .accountId(users.getAccountId())
                         .userName(users.getUserName())
                         .phoneNumber(users.getPhoneNumber())
+                        .city(users.getCity())
                         .address(users.getAddress())
                         .build();
         }

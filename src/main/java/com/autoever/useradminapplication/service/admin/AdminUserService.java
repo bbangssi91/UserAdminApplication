@@ -31,7 +31,7 @@ public class AdminUserService {
         String encodedPasword = passwordEncryptionService.encryptPassword(record.password());
 
         // 유저정보 갱신
-        users.changeUserInfo(encodedPasword, record); // 유저정보 갱신
+        users.changeUserInfo(encodedPasword, record);
         UserVO after = users.convertToVO(users);
 
         return AdminUserUpdateResponseDto.toResponse(users.getId(), before, after);

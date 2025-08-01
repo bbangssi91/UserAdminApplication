@@ -28,6 +28,9 @@ public record SignUpRequestDto(
     )
     String phoneNumber, // 핸드폰번호
 
+    @NotBlank(message = "행정구역(도시)는 필수 입력값입니다.") // 공백 또는 null 허용 불가
+    String city, // 도시
+
     @NotBlank(message = "주소는 필수 입력값입니다.") // 공백 또는 null 허용 불가
     String address // 주소
 ) {

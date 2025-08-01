@@ -8,14 +8,14 @@ public record UserSearchResponseDto(
         Long id,
         String accountId,
         String userName,
-        String address
+        String city
 ) {
         public static UserSearchResponseDto toResponse(Users user) {
                 return UserSearchResponseDto.builder()
                         .id(user.getId())
                         .accountId(user.getAccountId())
                         .userName(user.getUserName())
-                        .address(user.getAddress())
+                        .city(user.getCity())
                         .build();
         }
 }
