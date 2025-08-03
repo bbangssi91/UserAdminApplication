@@ -2,6 +2,8 @@ package com.autoever.useradminapplication.service.listener;
 
 import com.autoever.useradminapplication.common.redis.RedisPublisher;
 import com.autoever.useradminapplication.domain.vo.UserMessageEvent;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -14,6 +16,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Component
 public class UserMessageEventListener {
 
+    private final ObjectMapper objectMapper;
     private final RedisPublisher redisPublisher;
 
     /**
@@ -22,11 +25,15 @@ public class UserMessageEventListener {
     @Async("asyncTaskExecutor")
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void publishMessagesAsync(UserMessageEvent event) {
-        log.info("Processing UserMessageEvent after transaction commit...");
         event.userLogs().forEach(user -> {
             log.info("Published message to user: {}", user.getContent());
-            redisPublisher.publish(event.messageChannel(), user.getContent());
-
+            String json;
+            try {
+                json = objectMapper.writeValueAsString(user);
+                redisPublisher.publish(event.messageChannel(), json);
+            } catch (JsonProcessingException e) {
+                log.error("Error while converting UserLog to JSON: {}", e.getMessage());
+            }
         });
     }
 }
