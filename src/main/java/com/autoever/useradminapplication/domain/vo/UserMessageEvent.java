@@ -1,5 +1,6 @@
 package com.autoever.useradminapplication.domain.vo;
 
+import com.autoever.useradminapplication.constants.enums.MessageChannel;
 import com.autoever.useradminapplication.domain.entity.MessageLogs;
 import lombok.Builder;
 
@@ -15,6 +16,6 @@ public record UserMessageEvent (
 ) {
 
     public static UserMessageEvent of(List<MessageLogs> userLogs) {
-        return new UserMessageEvent("kakaotalk-message-channel", userLogs);
+        return new UserMessageEvent(MessageChannel.KAKAO_TALK_CHANNEL.getChannelName(), userLogs);
     }
 }

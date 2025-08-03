@@ -38,7 +38,6 @@ public class MessageLogs extends BaseEntity {
 
     private Long retryCount; // 재시도횟수
 
-
     public static List<MessageLogs> toEntity(List<Users> users, String messageContent) {
         return users.stream()
                 .map(user -> MessageLogs.builder()
