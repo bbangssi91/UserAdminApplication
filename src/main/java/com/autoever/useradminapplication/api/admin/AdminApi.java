@@ -1,10 +1,12 @@
 package com.autoever.useradminapplication.api.admin;
 
+import com.autoever.useradminapplication.dto.request.admin.AdminMessageRequestDto;
 import com.autoever.useradminapplication.dto.request.admin.AdminUserUpdateRequestDto;
 import com.autoever.useradminapplication.dto.response.admin.AdminUserSearchResponseDto;
 import com.autoever.useradminapplication.dto.response.admin.AdminUserUpdateResponseDto;
 import com.autoever.useradminapplication.global.GlobalApiResponse;
 import com.autoever.useradminapplication.service.admin.AdminUserService;
+import com.autoever.useradminapplication.service.admin.message.SendMessageService;
 import com.autoever.useradminapplication.service.users.facade.UserFacadeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,7 @@ public class AdminApi {
 
     private final UserFacadeService userFacadeService;
     private final AdminUserService adminUserService;
-
+    private final SendMessageService sendMessageService;
     /**
      *  테스트용 관리자 Basic Auth 로그인
      *
@@ -62,6 +64,10 @@ public class AdminApi {
         return ResponseEntity.ok(GlobalApiResponse.success(userUpdateResponseDto));
     }
 
+    @PostMapping(value = "/send-message-all-user", produces = "application/json", consumes = "application/json")
+    public void sendMessageToAllUsers(@RequestBody AdminMessageRequestDto request) {
+        sendMessageService.sendMessageToAllUsers(request);
+    }
 
 
 }

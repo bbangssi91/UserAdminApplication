@@ -41,5 +41,8 @@ public class UserSearchService {
         return userRepository.findAllByConditions(userName, pageable);
     }
 
-
+    @Transactional(readOnly = true)
+    public Page<Users> findAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
 }

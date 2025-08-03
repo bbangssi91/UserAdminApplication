@@ -8,6 +8,8 @@ services:
     depends_on:                                 # Application 구동순서 체크
       user-admin-database:
         condition: service_healthy
+      redis-server:
+        condition: service_healthy
 
   user-admin-database:
     container_name: mysql-server
@@ -21,5 +23,16 @@ services:
       - "3306:3306"
     healthcheck:
       test: ["CMD", "mysqladmin", "ping"]
+      interval: 5s
+      retries: 10
+
+  redis-server:
+    container_name: redis-server
+    image: redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--requirepass", "moon"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       retries: 10

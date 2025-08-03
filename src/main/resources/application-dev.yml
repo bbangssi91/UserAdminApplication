@@ -22,10 +22,21 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  # Redis
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 5000
+      password: moon
 
 logging:
   level:
     org.hibernate.SQL: debug
+    org.springframework.orm.jpa: DEBUG
+    org.springframework.transaction: TRACE
+
+
 
 server:
   port: ${SERVER_PORT:8080}  # 기본은 8080이지만, env에 따라 덮어쓰기 가능
