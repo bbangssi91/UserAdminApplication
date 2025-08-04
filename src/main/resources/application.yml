@@ -22,7 +22,7 @@ spring:
   # Redis
   data:
     redis:
-      host: localhost
+      host: redis-server
       port: 6379
       timeout: 5000
       password: moon
