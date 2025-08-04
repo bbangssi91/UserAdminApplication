@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Builder
 @Getter
+@Table(name = "MESSAGE_LOGS")
 @Entity
 public class MessageLogs extends BaseEntity {
 
