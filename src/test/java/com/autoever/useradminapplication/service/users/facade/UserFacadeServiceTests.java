@@ -60,17 +60,19 @@ public class UserFacadeServiceTests {
         when(userSearchService.findUsersByAccountId(request.accountId()))
                 .thenReturn(Optional.empty());
 
+
+        // 주민등록번호를 AES 기반으로 암호화
+        when(encryptionService.encryptByAES(request.residentRegistrationNumber())).thenReturn("encryptedRRN");
+        String encryptedRRN = encryptionService.encryptByAES(request.residentRegistrationNumber());
+
         // 동일한 주민번호가 없음
-        when(userSearchService.findByResidentRegistrationNumber(request.residentRegistrationNumber()))
+        when(userSearchService.findByResidentRegistrationNumber(encryptedRRN))
                 .thenReturn(Optional.empty());
 
         // 비밀번호를 BCrypt 기반으로 암호화
         when(encryptionService.encryptPassword(request.password())).thenReturn("encodedPassword");
 
-        // 주민등록번호를 AES 기반으로 암호화
-        when(encryptionService.encryptByAES(request.residentRegistrationNumber())).thenReturn("encryptedRRN");
-
-        Users registered = Users.toEntity(request, "encodedPassword", "encryptedRRN");
+        Users registered = Users.toEntity(request, "encodedPassword", encryptedRRN);
 
         when(userService.registerUser(any(Users.class))).thenReturn(registered);
 
@@ -79,9 +81,8 @@ public class UserFacadeServiceTests {
         // then
         assertThat(response).isNotNull();
         verify(userSearchService).findUsersByAccountId(request.accountId());
-        verify(userSearchService).findByResidentRegistrationNumber(request.residentRegistrationNumber());
+        verify(userSearchService).findByResidentRegistrationNumber(encryptedRRN);
         verify(encryptionService).encryptPassword(request.password());
-        verify(encryptionService).encryptByAES(request.residentRegistrationNumber());
         verify(userService).registerUser(any(Users.class));
     }
 
@@ -109,12 +110,13 @@ public class UserFacadeServiceTests {
     @Test
     public void 동일한_주민등록번호_회원가입_불가 () {
 
-        // 동일한 계정으로 가입된 회원이 존재
-        when(userSearchService.findUsersByAccountId(request.accountId()))
-                .thenReturn(Optional.empty());
-
-        when(userSearchService.findByResidentRegistrationNumber(request.residentRegistrationNumber()))
+        // 동일한 주민등록번호로 가입된 회원이 존재
+        when(encryptionService.encryptByAES(request.residentRegistrationNumber())).thenReturn("encryptedRRN");
+        when(userSearchService.findByResidentRegistrationNumber("encryptedRRN"))
                 .thenReturn(Optional.of(mock(Users.class)));
+
+//        when(userSearchService.findByResidentRegistrationNumber(anyString()))
+//                .thenReturn(Optional.of(mock(Users.class)));
 
         // when & then
         assertThatThrownBy(() -> userFacadeService.signUp(request))
@@ -122,9 +124,9 @@ public class UserFacadeServiceTests {
                 .hasMessageContaining("이미 존재하는 주민번호입니다");
 
         verify(userSearchService, times(1)).findUsersByAccountId(request.accountId());
-        verify(userSearchService, times(1)).findByResidentRegistrationNumber(request.residentRegistrationNumber());
+        verify(encryptionService, times(1)).encryptByAES(request.residentRegistrationNumber());
+        verify(userSearchService, times(1)).findByResidentRegistrationNumber("encryptedRRN");
         verify(encryptionService, times(0)).encryptPassword(request.password());
-        verify(encryptionService, times(0)).encryptPassword(request.residentRegistrationNumber());
         verify(userService, times(0)).registerUser(any(Users.class));
     }
 }
