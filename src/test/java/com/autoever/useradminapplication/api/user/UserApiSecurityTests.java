@@ -17,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -84,8 +85,31 @@ class UserApiSecurityTests {
                         .with(authentication(auth))
                         .header("Autorization", "Bearer " + token)
                 )
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
     }
 
+    @DisplayName("유효하지않은 JWT토큰으로 인증 검증 > 401 에러 발생")
+    @Test
+    void 유효하지않은_JWT토큰으로_인증_검증() throws Exception {
+        // given
+        Long userId = 2L;
+
+        Users users = new Users(
+                2L, "user02", "user02", "유저02",
+                "000000-1234567", "010-1234-1234",
+                "서울", "송파구", RoleType.USER);
+
+        // 로그인이 완료되어 생성된 실제 토큰
+        String token = jwtProvider.createToken(users);
+
+        // SecurityContext에 직접 주입
+        when(authChecker.checkUserAccess(2L)).thenReturn(false);
+
+        // when & then
+        mockMvc.perform(get("/api/users/{id}", userId)
+                        .header("Autorization", "Bearer " + token)
+                )
+                .andExpect(status().isUnauthorized())
+                .andDo(print());
+    }
 }
