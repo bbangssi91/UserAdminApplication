@@ -10,18 +10,25 @@ spring:
     password: moon
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
-      maximum-pool-size: 20      # 최대 커넥션 풀 사이즈
-      minimum-idle: 10           # 최소 유휴 커넥 수
-      connection-timeout: 30000  # 연결타임아웃(ms)
-      idle-timeout: 600000       # 유휴 커넥션 타임아웃 (ms)
-      max-lifetime: 1800000      # 커넥션의 최대 수명 (ms)
-      validation-timeout: 5000   # 커넥션 유효성 검사 타임아웃 (ms)
+      maximum-pool-size: 20                                # 최대 커넥션 풀 사이즈
+      minimum-idle: 10                                     # 최소 유휴 커넥 수
+      connection-timeout: 30000                            # 연결타임아웃(ms)
+      idle-timeout: 600000                                 # 유휴 커넥션 타임아웃 (ms)
+      max-lifetime: 1800000                                # 커넥션의 최대 수명 (ms)
+      validation-timeout: 5000                             # 커넥션 유효성 검사 타임아웃 (ms)
   jpa:
     hibernate:
       ddl-auto: update
+    defer-datasource-initialization: true                  # JPA가 테이블을 먼저 생성하고 SQL 파일로 데이터를 초기화
     properties:
       hibernate:
         format_sql: true
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:data.sql
+      encoding: UTF-8
+
   # Redis
   data:
     redis:

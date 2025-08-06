@@ -1,6 +1,7 @@
 package com.autoever.useradminapplication.global.error;
 
 import com.autoever.useradminapplication.exception.DataNotFoundException;
+import com.autoever.useradminapplication.exception.LoginFailedException;
 import com.autoever.useradminapplication.exception.UniqueViolationException;
 import com.autoever.useradminapplication.global.GlobalApiResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +29,7 @@ public class GlobalExceptionHandler {
     // 유효성 검사 실패 예외 처리
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<GlobalApiResponse<Map<String, String>>> handleValidationException(
+    public ResponseEntity<GlobalApiResponse<Object>> handleValidationException(
             MethodArgumentNotValidException exception) {
         BindingResult bindingResult = exception.getBindingResult();
 
@@ -38,15 +40,19 @@ public class GlobalExceptionHandler {
         }
 
         // 400 상태 반환
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(GlobalApiResponse.failure("유효성 검사 실패", errors));
+        return createErrorResponse(exception, ErrorCode.INVALID_PARAMETER, errors.toString());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<GlobalApiResponse<Object>> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         return createErrorResponse(e, ErrorCode.INVALID_PARAMETER, e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(LoginFailedException.class)
+    public ResponseEntity<GlobalApiResponse<Object>> handleLoginFailedException(LoginFailedException e) {
+        return createErrorResponse(e, ErrorCode.UNAUTHORIZED, e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
@@ -61,6 +67,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<GlobalApiResponse<Object>> handleNoSuchElementException(DataNotFoundException e) {
         return createErrorResponse(e, ErrorCode.DATA_NOT_FOUND, e.getMessage());
     }
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<GlobalApiResponse<Object>> handleNoResourceFoundException(NoResourceFoundException e) {
+        return createErrorResponse(e, ErrorCode.DATA_NOT_FOUND, "요청 경로가 잘못되었습니다.");
+    }
+
 
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)

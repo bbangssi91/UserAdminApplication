@@ -2,6 +2,7 @@ package com.autoever.useradminapplication.service.admin;
 
 import com.autoever.useradminapplication.domain.entity.Users;
 import com.autoever.useradminapplication.domain.vo.UserVO;
+import com.autoever.useradminapplication.dto.request.admin.AdminUserDeleteRequestDto;
 import com.autoever.useradminapplication.dto.request.admin.AdminUserUpdateRequestDto;
 import com.autoever.useradminapplication.dto.response.admin.AdminUserUpdateResponseDto;
 import com.autoever.useradminapplication.exception.DataNotFoundException;
@@ -21,8 +22,8 @@ public class AdminUserService {
     private final UserRepository userRepository;
 
     @Transactional(rollbackFor = RuntimeException.class)
-    public AdminUserUpdateResponseDto updateUserInfo(Long id, @Valid AdminUserUpdateRequestDto record) {
-        Users users = userRepository.findById(id)
+    public AdminUserUpdateResponseDto updateUserInfo(@Valid AdminUserUpdateRequestDto record) {
+        Users users = userRepository.findById(record.id())
                 .orElseThrow(() -> new DataNotFoundException(ErrorCode.DATA_NOT_FOUND, "존재하지 않는 사용자입니다."));
 
         UserVO before = users.convertToVO(users);
@@ -35,5 +36,13 @@ public class AdminUserService {
         UserVO after = users.convertToVO(users);
 
         return AdminUserUpdateResponseDto.toResponse(users.getId(), before, after);
+    }
+
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void deleteUserInfo(@Valid AdminUserDeleteRequestDto request) {
+        Users user = userRepository.findById(request.id())
+                .orElseThrow(() -> new DataNotFoundException(ErrorCode.DATA_NOT_FOUND, "존재하지 않는 사용자입니다."));
+
+        userRepository.delete(user);
     }
 }

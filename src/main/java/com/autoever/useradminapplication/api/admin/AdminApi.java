@@ -1,6 +1,7 @@
 package com.autoever.useradminapplication.api.admin;
 
 import com.autoever.useradminapplication.dto.request.admin.AdminMessageRequestDto;
+import com.autoever.useradminapplication.dto.request.admin.AdminUserDeleteRequestDto;
 import com.autoever.useradminapplication.dto.request.admin.AdminUserUpdateRequestDto;
 import com.autoever.useradminapplication.dto.response.admin.AdminUserSearchResponseDto;
 import com.autoever.useradminapplication.dto.response.admin.AdminUserUpdateResponseDto;
@@ -26,26 +27,6 @@ public class AdminApi {
     private final UserFacadeService userFacadeService;
     private final AdminUserService adminUserService;
     private final SendMessageService sendMessageService;
-    /**
-     *  테스트용 관리자 Basic Auth 로그인
-     *
-     * @param userName
-     * @param pageable
-     * @return
-     */
-//    @GetMapping("/login")
-//    public ResponseEntity<?> login(Authentication authentication) {
-//        // 인증이 성공되었을 경우에만 이 메서드까지 도달함
-//        if (authentication == null || !authentication.isAuthenticated()) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//        }
-//
-//        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-//        return ResponseEntity.ok(Map.of(
-//                "accountId", userDetails.getUsername(),
-//                "roleType", userDetails.getAuthorities()
-//        ));
-//    }
 
     @GetMapping(value = "/users", produces = "application/json")
     public ResponseEntity<GlobalApiResponse<List<AdminUserSearchResponseDto>>> getUsers(
@@ -58,11 +39,18 @@ public class AdminApi {
         return ResponseEntity.ok(GlobalApiResponse.success(users));
     }
 
-    @PutMapping(value = "/users/{id}", produces = "application/json", consumes = "application/json")
-    public ResponseEntity<GlobalApiResponse<AdminUserUpdateResponseDto>> updateUserInfo(@PathVariable Long id, @RequestBody @Valid AdminUserUpdateRequestDto request) {
-        AdminUserUpdateResponseDto userUpdateResponseDto = adminUserService.updateUserInfo(id, request);
+    @PutMapping(value = "/users", produces = "application/json", consumes = "application/json")
+    public ResponseEntity<GlobalApiResponse<AdminUserUpdateResponseDto>> updateUserInfo(@RequestBody @Valid AdminUserUpdateRequestDto request) {
+        AdminUserUpdateResponseDto userUpdateResponseDto = adminUserService.updateUserInfo(request);
         return ResponseEntity.ok(GlobalApiResponse.success(userUpdateResponseDto));
     }
+
+    @DeleteMapping(value = "/users", produces = "application/json", consumes = "application/json")
+    public ResponseEntity<GlobalApiResponse<String>> deleteUserInfo(@RequestBody @Valid AdminUserDeleteRequestDto request) {
+        adminUserService.deleteUserInfo(request);
+        return ResponseEntity.ok(GlobalApiResponse.success("회원탈퇴 완료"));
+    }
+
 
     @PostMapping(value = "/send-message-all-user", produces = "application/json", consumes = "application/json")
     public void sendMessageToAllUsers(@RequestBody AdminMessageRequestDto request) {
