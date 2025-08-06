@@ -42,15 +42,16 @@ public class UserFacadeService {
                 });
 
         // 2. 사용자 주민번호 중복되는지 검사
-        userSearchService.findByResidentRegistrationNumber(record.residentRegistrationNumber())
+        String encryptSSN = encryptionService.encryptByAES(record.residentRegistrationNumber());
+        userSearchService.findByResidentRegistrationNumber(encryptSSN)
                 .ifPresent(user -> {
                     throw new UniqueViolationException(ErrorCode.EXISTS_UNIQUE_VALUE, "이미 존재하는 주민번호입니다");
                 });
 
         // 3. 비밀번호와 주민등록번호를 암호화
         String encode = encryptionService.encryptPassword(record.password());
-        String encrypt = encryptionService.encryptByAES(record.residentRegistrationNumber());
-        Users encryptedEntity = Users.toEntity(record, encode, encrypt);
+
+        Users encryptedEntity = Users.toEntity(record, encode, encryptSSN);
 
         // 4. 유저 회원가입
         Users results = userService.registerUser(encryptedEntity);
