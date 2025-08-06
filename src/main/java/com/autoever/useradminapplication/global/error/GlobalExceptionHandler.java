@@ -1,6 +1,7 @@
 package com.autoever.useradminapplication.global.error;
 
 import com.autoever.useradminapplication.exception.DataNotFoundException;
+import com.autoever.useradminapplication.exception.LoginFailedException;
 import com.autoever.useradminapplication.exception.UniqueViolationException;
 import com.autoever.useradminapplication.global.GlobalApiResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +47,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<GlobalApiResponse<Object>> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         return createErrorResponse(e, ErrorCode.INVALID_PARAMETER, e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(LoginFailedException.class)
+    public ResponseEntity<GlobalApiResponse<Object>> handleLoginFailedException(LoginFailedException e) {
+        return createErrorResponse(e, ErrorCode.UNAUTHORIZED, e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
