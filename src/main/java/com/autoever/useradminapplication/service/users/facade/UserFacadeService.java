@@ -15,7 +15,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,7 +26,6 @@ public class UserFacadeService {
     private final UserSearchService userSearchService;
     private final UserService userService;
     private final EncryptionService encryptionService;
-    private final PasswordEncoder passwordEncoder;
 
     /**
      *  사용자의 회원가입을 수행하는 메서드
