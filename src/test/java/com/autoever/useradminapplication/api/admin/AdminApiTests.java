@@ -1,6 +1,5 @@
-package com.autoever.useradminapplication.api;
+package com.autoever.useradminapplication.api.admin;
 
-import com.autoever.useradminapplication.api.admin.AdminApi;
 import com.autoever.useradminapplication.constants.enums.RoleType;
 import com.autoever.useradminapplication.domain.vo.UserVO;
 import com.autoever.useradminapplication.dto.request.admin.AdminMessageRequestDto;
@@ -30,10 +29,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.springframework.http.RequestEntity.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
