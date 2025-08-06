@@ -5,6 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record SignUpResponseDto(
+        Long id,
         String accountId, // 계정
         String userName, // 성명
         String phoneNumber, // 핸드폰번호
@@ -13,6 +14,7 @@ public record SignUpResponseDto(
 ) {
         public static SignUpResponseDto toResponse(Users users) {
                 return SignUpResponseDto.builder()
+                        .id(users.getId())
                         .accountId(users.getAccountId())
                         .userName(users.getUserName())
                         .phoneNumber(users.getPhoneNumber())

@@ -67,7 +67,8 @@ public class UserApiTests {
                 , "송파구");
         // 응답 given
         SignUpResponseDto response = new SignUpResponseDto(
-                "user01"
+                 3L
+                ,"user01"
                 , "유저01"
                 , "010-0000-0000"
                 ,"서울특별시"
