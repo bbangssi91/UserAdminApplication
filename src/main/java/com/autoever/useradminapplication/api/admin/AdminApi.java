@@ -1,6 +1,7 @@
 package com.autoever.useradminapplication.api.admin;
 
 import com.autoever.useradminapplication.dto.request.admin.AdminMessageRequestDto;
+import com.autoever.useradminapplication.dto.request.admin.AdminUserDeleteRequestDto;
 import com.autoever.useradminapplication.dto.request.admin.AdminUserUpdateRequestDto;
 import com.autoever.useradminapplication.dto.response.admin.AdminUserSearchResponseDto;
 import com.autoever.useradminapplication.dto.response.admin.AdminUserUpdateResponseDto;
@@ -43,6 +44,13 @@ public class AdminApi {
         AdminUserUpdateResponseDto userUpdateResponseDto = adminUserService.updateUserInfo(request);
         return ResponseEntity.ok(GlobalApiResponse.success(userUpdateResponseDto));
     }
+
+    @DeleteMapping(value = "/users", produces = "application/json", consumes = "application/json")
+    public ResponseEntity<GlobalApiResponse<String>> deleteUserInfo(@RequestBody @Valid AdminUserDeleteRequestDto request) {
+        adminUserService.deleteUserInfo(request);
+        return ResponseEntity.ok(GlobalApiResponse.success("회원탈퇴 완료"));
+    }
+
 
     @PostMapping(value = "/send-message-all-user", produces = "application/json", consumes = "application/json")
     public void sendMessageToAllUsers(@RequestBody AdminMessageRequestDto request) {

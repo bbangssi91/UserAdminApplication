@@ -160,7 +160,8 @@ public class UserApiTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.accountId").value(response.accountId()))
                 .andExpect(jsonPath("$.data.userName").value(response.userName()))
-                .andExpect(jsonPath("$.data.city").value(response.city()));
+                .andExpect(jsonPath("$.data.city").value(response.city()))
+                .andDo(print());
     }
 
 
