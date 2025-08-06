@@ -26,26 +26,6 @@ public class AdminApi {
     private final UserFacadeService userFacadeService;
     private final AdminUserService adminUserService;
     private final SendMessageService sendMessageService;
-    /**
-     *  테스트용 관리자 Basic Auth 로그인
-     *
-     * @param userName
-     * @param pageable
-     * @return
-     */
-//    @GetMapping("/login")
-//    public ResponseEntity<?> login(Authentication authentication) {
-//        // 인증이 성공되었을 경우에만 이 메서드까지 도달함
-//        if (authentication == null || !authentication.isAuthenticated()) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//        }
-//
-//        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-//        return ResponseEntity.ok(Map.of(
-//                "accountId", userDetails.getUsername(),
-//                "roleType", userDetails.getAuthorities()
-//        ));
-//    }
 
     @GetMapping(value = "/users", produces = "application/json")
     public ResponseEntity<GlobalApiResponse<List<AdminUserSearchResponseDto>>> getUsers(
@@ -58,9 +38,9 @@ public class AdminApi {
         return ResponseEntity.ok(GlobalApiResponse.success(users));
     }
 
-    @PutMapping(value = "/users/{id}", produces = "application/json", consumes = "application/json")
-    public ResponseEntity<GlobalApiResponse<AdminUserUpdateResponseDto>> updateUserInfo(@PathVariable Long id, @RequestBody @Valid AdminUserUpdateRequestDto request) {
-        AdminUserUpdateResponseDto userUpdateResponseDto = adminUserService.updateUserInfo(id, request);
+    @PutMapping(value = "/users", produces = "application/json", consumes = "application/json")
+    public ResponseEntity<GlobalApiResponse<AdminUserUpdateResponseDto>> updateUserInfo(@RequestBody @Valid AdminUserUpdateRequestDto request) {
+        AdminUserUpdateResponseDto userUpdateResponseDto = adminUserService.updateUserInfo(request);
         return ResponseEntity.ok(GlobalApiResponse.success(userUpdateResponseDto));
     }
 

@@ -21,8 +21,8 @@ public class AdminUserService {
     private final UserRepository userRepository;
 
     @Transactional(rollbackFor = RuntimeException.class)
-    public AdminUserUpdateResponseDto updateUserInfo(Long id, @Valid AdminUserUpdateRequestDto record) {
-        Users users = userRepository.findById(id)
+    public AdminUserUpdateResponseDto updateUserInfo(@Valid AdminUserUpdateRequestDto record) {
+        Users users = userRepository.findById(record.id())
                 .orElseThrow(() -> new DataNotFoundException(ErrorCode.DATA_NOT_FOUND, "존재하지 않는 사용자입니다."));
 
         UserVO before = users.convertToVO(users);
