@@ -15,8 +15,7 @@ import java.util.Date;
 public class JwtProvider {
 
     private final String secretKey = "67Kg7J207IqkNjTroZzsl5TsvZTrlKnsnbTrkJjslrTshJzstqnrtoTtnojquLTrrLjsnpDqsIDrgpjsmYDrnbw=";
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60; // 1시간 (밀리초 단위)
-
+    private static long EXPIRATION_TIME = 1000 * 60 * 60; // 1시간 (밀리초 단위)
 
     public String createToken(Users currentUser) {
         Claims claims = Jwts.claims()
