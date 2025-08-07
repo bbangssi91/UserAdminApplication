@@ -91,8 +91,8 @@ class AdminApiTests {
         // given
         Long userId = 1L;
         AdminUserUpdateRequestDto request = new AdminUserUpdateRequestDto(12345L, "010-1234-5678", "서울시", "송파구");
-        UserVO before = new UserVO("12345", "서울시", "송파구");
-        UserVO after = new UserVO("12345", "서울시", "강동구");
+        UserVO before = new UserVO("서울시", "송파구");
+        UserVO after = new UserVO("서울시", "강동구");
         AdminUserUpdateResponseDto responseDto = new AdminUserUpdateResponseDto(userId, before, after);
 
         when(adminUserService.updateUserInfo(any(AdminUserUpdateRequestDto.class)))

@@ -68,7 +68,6 @@ public class Users extends BaseEntity {
 
     public UserVO convertToVO(Users users) {
         return UserVO.builder()
-                .password(users.getPassword())
                 .city(users.getCity())
                 .address(users.getAddress())
                 .build();
